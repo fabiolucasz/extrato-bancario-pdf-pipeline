@@ -33,18 +33,20 @@ for line in lines:
 df = pd.DataFrame(rows, columns=["Data","Tipo de movimentação", "Valor"])
 
 #Conversão para o formato padrão de data e moeda
-df["Data"] = (df["Data"].str.replace("abr", "04")
-              .str.replace("fev", "02")
-              .str.replace("mai", "05")
-              .str.replace("ago", "08")
-              .str.replace("out", "10")
-              .str.replace("set", "09")
-              .str.replace("dez", "12")
+df["Data"] = (df["Data"]
               .str.replace("jan", "01")
+              .str.replace("fev", "02")
               .str.replace("mar", "03")
+              .str.replace("abr", "04")
+              .str.replace("mai", "05")
               .str.replace("jun", "06")
               .str.replace("jul", "07")
-              .str.replace("nov", "11"))
+              .str.replace("ago", "08")
+              .str.replace("set", "09")
+              .str.replace("out", "10")
+              .str.replace("nov", "11")
+              .str.replace("dez", "12")
+              )
 df["Data"] = pd.to_datetime(df["Data"], format="%d/%m/%Y")
 
 df["Valor"] = ((df["Valor"].str.replace("R$", "")
@@ -55,4 +57,5 @@ df["Valor"] = pd.to_numeric(df["Valor"], errors="coerce")
 
 df.to_csv("./data/dados.csv", index=False, encoding="utf-8")
 print(df)
-
+print(type(df['Data']))
+print(type(df['Valor']))

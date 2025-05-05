@@ -1,55 +1,83 @@
 import pandas as pd
 import streamlit as st
 
+
 # Carregando o arquivo CSV
 df = pd.read_csv("data/dados.csv")
-print(df)
+df['Data'] = pd.to_datetime(df['Data'])
 
-#mostrar venda e compra
-filtro1= df["Tipo de movimentação"].isin(["Guardado", "Resgatado"])
-filtro1_apply= df.loc[filtro1]
-st.dataframe(filtro1_apply)
+#Filtros
+st.sidebar.header("Filtros")
 
-
-#rendimentos
-filtro_rendimentos = df["Tipo de movimentação"].isin(["Rendimentos"])
-rendimento_filtrado = df.loc[filtro_rendimentos]
-
-st.title("Rendimentos da carteira")
-st.bar_chart(rendimento_filtrado.sort_values(by="Data"), x="Data", y="Valor")
-st.caption("Total de rendimentos")
-#total de rendimentos
-total_acumulado = rendimento_filtrado["Valor"].sum()
-st.text(total_acumulado)
-
-#depósitos
-filtro_guardado = df["Tipo de movimentação"].isin(["Guardado"])
-guardado_filtrado = df.loc[filtro_guardado]
-
-st.title("Depósitos na carteira")
-st.bar_chart(guardado_filtrado.sort_values(by="Data"), x="Data", y="Valor")
-st.caption("Total depositado")
-#total depositado
-total_guardado = guardado_filtrado["Valor"].sum()
-st.text(total_guardado)
+#Filtro dataframe
+tipos = ["Guardado", "Resgatado", "Rendimentos"]
+lista = st.sidebar.multiselect("Selecione o tipo de movimentação",tipos,default=tipos[0])
+tipo= df["Tipo de movimentação"].isin(lista)
 
 
-#saques
-filtro_resgatado = df["Tipo de movimentação"].isin(["Resgatado"])
-resgatado_filtrado = df.loc[filtro_resgatado]
+#Filtro de datas
+data = tipo
+data_filtro = df.loc[data]
+data_inicial = data_filtro['Data'].min().to_pydatetime()
+data_final = (data_filtro['Data'].max()).to_pydatetime()
 
-st.title("Resgates na carteira")
-st.bar_chart(resgatado_filtrado.sort_values(by="Data"), x="Data", y="Valor",color="#FF0000")
-st.caption("Total de Saques")
-#total sacado
-#total depositado
-total_sacado = resgatado_filtrado["Valor"].sum()
-st.text(total_sacado)
+intervalo_datas = st.sidebar.slider("Selecione o período",
+                                    min_value=data_inicial,
+                                    max_value=data_final,
+                                    value=(data_inicial,data_final))
 
-st.caption("Total Acumulado")
-rend_dep = total_acumulado + total_guardado
-saldo_final = rend_dep + total_sacado
-st.text(saldo_final)
+data_filtrada = data_filtro[
+    (data_filtro['Data'] >= intervalo_datas[0]) &
+    (data_filtro['Data'] <= intervalo_datas[1])
+]
+
+#KPI's
+# rendimentos
+rendimentos = df['Tipo de movimentação'].isin(["Rendimentos"])
+kpi_rendimentos = df.loc[rendimentos]
+total_rendimentos = kpi_rendimentos['Valor'].sum()
+
+
+# Guardado
+guardado = df['Tipo de movimentação'].isin(['Guardado'])
+kpi_guardado = df.loc[guardado]
+total_guardado = kpi_guardado['Valor'].sum()
+
+# Resgatado
+resgatado = df['Tipo de movimentação'].isin(['Resgatado'])
+kpi_resgatado = df.loc[resgatado]
+total_resgatado = kpi_resgatado['Valor'].sum()
+
+# Saldo
+saldo = total_guardado + total_rendimentos - total_resgatado
+
+dados= {
+    "Depositado": [total_guardado],
+    "Resgatado": [total_resgatado],
+    "Rendimentos": [total_rendimentos],
+    "Saldo Total": [saldo]
+}
+
+kpi_dataframe = pd.DataFrame(dados)
+print(kpi_dataframe)
+#Criação de gráficos
+
+
+st.title("Cofrinho PicPay")
+#KPI's
+st.dataframe(kpi_dataframe)
+
+#Gráficos
+st.dataframe(data_filtrada)
+st.bar_chart(data_filtrada.sort_values(by="Data"), x="Data", y="Valor")
+
+
+
+
+
+
+
+
 
 #streamlit run app.py
 
