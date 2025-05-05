@@ -59,13 +59,10 @@ dados= {
 }
 
 kpi_dataframe = pd.DataFrame(dados)
-print(kpi_dataframe)
 
 #Cálculo Total por periodo
 soma_total = data_filtrada['Valor'].sum()
 resultado = soma_total
-
-
 
 #Título
 st.title("Cofrinho PicPay")
@@ -75,8 +72,6 @@ st.dataframe(kpi_dataframe)
 
 #Gráficos
 st.bar_chart(data_filtrada.sort_values(by="Data"), x="Data", y="Valor")
-
-
 st.text("Total do período")
 st.text(f"R${resultado:.2f}")
 
