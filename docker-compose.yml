@@ -1,0 +1,8 @@
+# docker-compose.yml
+services:
+
+  streamlit:
+    build: .
+    container_name: dashboard
+    ports:
+      - "8501:8501"
