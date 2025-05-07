@@ -69,7 +69,7 @@ try:
     total_resgatado = kpi_resgatado['Valor'].sum()
 
     # Saldo
-    saldo = total_guardado + total_rendimentos - total_resgatado
+    saldo = total_resgatado + total_guardado + total_rendimentos
 
     # Verifica se há dados antes de criar KPIs e gráficos
     if len(df) > 0:
