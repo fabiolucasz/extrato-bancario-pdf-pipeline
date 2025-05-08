@@ -3,3 +3,4 @@ streamlit~=1.44.1
 tabula-py~=2.10.0
 sqlalchemy~=2.0.40
 uvicorn~=0.34.2
+st_pages==1.0.1
