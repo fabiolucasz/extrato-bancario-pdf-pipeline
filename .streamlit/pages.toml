@@ -1,0 +1,9 @@
+[[pages]]
+path = "app.py"
+name = "home"
+icon = "📄"
+
+[[pages]]
+path = "dashboard.py"
+name = "dashboard"
+icon = ":material/history:"
