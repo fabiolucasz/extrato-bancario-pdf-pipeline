@@ -6,4 +6,4 @@ icon = "📄"
 [[pages]]
 path = "dashboard.py"
 name = "dashboard"
-icon = ":material/history:"
+icon = ":bar_chart:"
