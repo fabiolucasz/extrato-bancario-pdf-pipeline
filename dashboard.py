@@ -13,9 +13,9 @@ Path("data").mkdir(parents=True, exist_ok=True)
 authenticator.login()
 
 if st.session_state.get('authentication_status'):
-    adicionar_pdf = st.file_uploader("Adicionar PDF", type="pdf")
+    adicionar_pdf = st.sidebar.file_uploader("Adicionar PDF", type="pdf")
     if adicionar_pdf:
-        st.write("Carregando PDF...")
+        st.sidebar.write("Carregando PDF...")
         tabula.convert_into(adicionar_pdf, "./data/extrato.csv", output_format="csv", pages='all', guess=False)
         tratamento_dados()
 
@@ -110,7 +110,51 @@ if st.session_state.get('authentication_status'):
 
             #Gráficos
             
-            st.bar_chart(data_filtrada.sort_values(by="Data"), x="Data", y="Valor", color=["#588157"])
+            # Criar uma cópia do DataFrame para manter os tipos originais
+            df_plot = data_filtrada.copy()
+            
+            # Criar uma coluna de legendas com o tipo de movimentação
+            df_plot['legenda'] = df_plot['Tipo de movimentação']
+            
+            # Criar o gráfico usando plotly para mais controle visual
+            import plotly.express as px
+            
+            # Criar o gráfico de barras
+            fig = px.bar(
+                df_plot,
+                x='Data',
+                y='Valor',
+                color='legenda',
+                color_discrete_map={
+                    'Guardado': '#588157',
+                    'Resgatado': '#d62728',
+                    'Rendimentos': '#2ca02c',
+                    'Ajuste nos rendimentos': '#1f77b4'
+                },
+                title='Movimentações por Data',
+                labels={'Valor': 'Valor (R$)', 'Data': 'Data'},
+                category_orders={'Data': df_plot['Data'].dt.strftime('%d/%m/%Y').unique()}
+            )
+            
+            # Atualizar o layout para mostrar os valores
+            fig.update_traces(
+                texttemplate='%{value:.2f}',
+                textposition='auto'
+            )
+            
+            # Adicionar valores nos pontos
+            fig.update_layout(
+                showlegend=True,
+                legend_title_text='Tipo de Movimentação',
+                yaxis_title='Valor (R$)',
+                xaxis_title='Data',
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                xaxis_type='category'  # Força o eixo X a tratar como categorias
+            )
+            
+            # Exibir o gráfico
+            st.plotly_chart(fig, use_container_width=True)
             st.text("Total do período")
             st.text(f"R${resultado:.2f}")
         else:

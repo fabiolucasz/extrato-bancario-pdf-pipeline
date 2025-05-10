@@ -1,7 +1,6 @@
 import re
 import csv
 import pandas as pd
-import streamlit as st
 
 
 
@@ -54,4 +53,3 @@ def tratamento_dados():
     df["Valor"] = pd.to_numeric(df["Valor"], errors="coerce")
 
     df.to_csv("./data/dados.csv", index=False, encoding="utf-8")
-    st.write("Dados carregados, caso não apareça os dados, atualize a página.")

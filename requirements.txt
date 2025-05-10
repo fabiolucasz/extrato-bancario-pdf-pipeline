@@ -5,3 +5,5 @@ sqlalchemy~=2.0.40
 uvicorn~=0.34.2
 st_pages==1.0.1
 streamlit-authenticator~=0.4.2
+plotly~=6.0.1
+
