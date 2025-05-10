@@ -1,9 +1,9 @@
 [[pages]]
 path = "homepage.py"
-name = "home"
+name = "Home"
 icon = "📄"
 
 [[pages]]
 path = "dashboard.py"
-name = "dashboard"
+name = "Dashboard"
 icon = ":bar_chart:"
