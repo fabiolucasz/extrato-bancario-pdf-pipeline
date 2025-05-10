@@ -110,7 +110,7 @@ if st.session_state.get('authentication_status'):
 
             #Gráficos
             
-            st.bar_chart(data_filtrada.sort_values(by="Data"), x="Data", y="Valor")
+            st.bar_chart(data_filtrada.sort_values(by="Data"), x="Data", y="Valor", color=["#588157"])
             st.text("Total do período")
             st.text(f"R${resultado:.2f}")
         else:
