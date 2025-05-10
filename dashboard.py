@@ -34,7 +34,7 @@ if st.session_state.get('authentication_status'):
         # Verifica se há dados antes de tentar filtrar
         if len(df) > 0:
             #Filtro dataframe
-            tipos = ["Guardado", "Resgatado", "Rendimentos"]
+            tipos = ["Guardado", "Resgatado", "Rendimentos", "Ajuste nos rendimentos"]
             lista = st.sidebar.multiselect("Selecione o tipo de movimentação",tipos,default=tipos[0])
             tipo= df["Tipo de movimentação"].isin(lista)
 
@@ -43,26 +43,36 @@ if st.session_state.get('authentication_status'):
             data_filtro = df.loc[data]
             data_inicial = data_filtro['Data'].min().to_pydatetime()
             data_final = (data_filtro['Data'].max()).to_pydatetime()
-
-            intervalo_datas = st.sidebar.slider("Selecione o período",
-                                                min_value=data_inicial,
-                                                max_value=data_final,
-                                                value=(data_inicial,data_final))
-
-            data_filtrada = data_filtro[
-                (data_filtro['Data'] >= intervalo_datas[0]) &
-                (data_filtro['Data'] <= intervalo_datas[1])
-            ]
-        else:
-            st.info("Nenhum dado disponível. Faça upload de um PDF para começar.")
-            # Cria um DataFrame vazio para evitar erros
-            data_filtrada = pd.DataFrame({"Data": [], "Valor": []})
+            
+            # Se há apenas uma data, não mostra o slider e usa essa data única
+            if data_inicial == data_final:
+                data_filtrada = data_filtro
+                st.sidebar.info(f"Apenas uma data disponível: {data_inicial.strftime('%d/%m/%Y')}")
+            else:
+                intervalo_datas = st.sidebar.slider("Selecione o período",
+                                                    min_value=data_inicial,
+                                                    max_value=data_final,
+                                                    value=(data_inicial,data_final))
+                data_filtrada = data_filtro[
+                    (data_filtro['Data'] >= intervalo_datas[0]) &
+                    (data_filtro['Data'] <= intervalo_datas[1])
+                ]
 
         #KPI's
         # rendimentos
         rendimentos = df['Tipo de movimentação'].isin(["Rendimentos"])
         kpi_rendimentos = df.loc[rendimentos]
         total_rendimentos = kpi_rendimentos['Valor'].sum()
+
+        #ajuste nos rendimentos
+        ajuste_rendimentos = df['Tipo de movimentação'].isin(['Ajuste nos rendimentos'])
+        kpi_ajuste_rendimentos = df.loc[ajuste_rendimentos]
+        total_ajuste_rendimentos = kpi_ajuste_rendimentos['Valor'].sum()
+
+        if total_ajuste_rendimentos >=0:
+            total_ajuste_rendimentos + total_rendimentos
+        else:
+            total_ajuste_rendimentos - total_rendimentos
 
         # Guardado
         guardado = df['Tipo de movimentação'].isin(['Guardado'])
@@ -75,7 +85,7 @@ if st.session_state.get('authentication_status'):
         total_resgatado = kpi_resgatado['Valor'].sum()
 
         # Saldo
-        saldo = total_resgatado + total_guardado + total_rendimentos
+        saldo = total_ajuste_rendimentos + total_resgatado + total_guardado + total_rendimentos
 
         # Verifica se há dados antes de criar KPIs e gráficos
         if len(df) > 0:

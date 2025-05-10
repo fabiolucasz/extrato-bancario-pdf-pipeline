@@ -18,7 +18,7 @@ def tratamento_dados():
         if line and line[0].startswith("Data:"):
             current_date = re.search(r"Data:\s([\d\w\/]+)", line[0]).group(1)
 
-        elif any(keyword in line[0] for keyword in ["Guardado", "Rendimentos", "Resgatado"]):
+        elif any(keyword in line[0] for keyword in ["Guardado", "Rendimentos", "Resgatado", "Ajuste nos rendimentos"]):
 
             movement_type = line[0].strip()
             if len(line) > 1:  # Garantir que a linha contém um valor válido
