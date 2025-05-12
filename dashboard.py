@@ -13,6 +13,7 @@ Path("data").mkdir(parents=True, exist_ok=True)
 authenticator.login()
 
 if st.session_state.get('authentication_status'):
+    authenticator.logout('Logout', 'sidebar')
     adicionar_pdf = st.sidebar.file_uploader("Adicionar PDF", type="pdf")
     if adicionar_pdf:
         st.sidebar.write("Carregando PDF...")
@@ -26,6 +27,7 @@ if st.session_state.get('authentication_status'):
         
         df = pd.read_csv("data/dados.csv")
         df['Data'] = pd.to_datetime(df['Data'])
+        df['Data'] = df['Data'].dt.date
 
 
         #Filtros
@@ -41,8 +43,8 @@ if st.session_state.get('authentication_status'):
             #Filtro de datas
             data = tipo
             data_filtro = df.loc[data]
-            data_inicial = data_filtro['Data'].min().to_pydatetime()
-            data_final = (data_filtro['Data'].max()).to_pydatetime()
+            data_inicial = data_filtro['Data'].min()
+            data_final = data_filtro['Data'].max()
             
             # Se há apenas uma data, não mostra o slider e usa essa data única
             if data_inicial == data_final:
@@ -133,7 +135,7 @@ if st.session_state.get('authentication_status'):
                 },
                 title='Movimentações por Data',
                 labels={'Valor': 'Valor (R$)', 'Data': 'Data'},
-                category_orders={'Data': df_plot['Data'].dt.strftime('%d/%m/%Y').unique()}
+                category_orders={'Data': df_plot['Data'].unique()}
             )
             
             # Atualizar o layout para mostrar os valores
@@ -159,7 +161,7 @@ if st.session_state.get('authentication_status'):
             st.text(f"R${resultado:.2f}")
         else:
             st.info("Nenhum dado disponível. Faça upload de um PDF para começar.")
-        authenticator.logout('Logout', 'sidebar')
+        
 
     except FileNotFoundError:
         st.info("Nenhum arquivo de dados encontrado. Faça upload de um PDF para começar.")

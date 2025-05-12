@@ -45,6 +45,7 @@ def tratamento_dados():
                 .str.replace("dez", "12")
                 )
     df["Data"] = pd.to_datetime(df["Data"], format="%d/%m/%Y")
+    
 
     df["Valor"] = ((df["Valor"].str.replace("R$", "")
                 .str.replace(" ", ""))
