@@ -38,7 +38,12 @@ if st.session_state.get('authentication_status'):
             #Filtro dataframe
             tipos = ["Guardado", "Resgatado", "Rendimentos", "Ajuste nos rendimentos"]
             lista = st.sidebar.multiselect("Selecione o tipo de movimentação",tipos,default=tipos[0])
-            tipo= df["Tipo de movimentação"].isin(lista)
+
+            if lista:
+                tipo= df["Tipo de movimentação"].isin(lista)
+            else:
+                tipo = df['Tipo de movimentação'].isin(tipos)
+                st.sidebar.info("Nenhum filtro selecionado. Exibindo todos os dados.")
 
             #Filtro de datas
             data = tipo
@@ -59,7 +64,7 @@ if st.session_state.get('authentication_status'):
                     (data_filtro['Data'] >= intervalo_datas[0]) &
                     (data_filtro['Data'] <= intervalo_datas[1])
                 ]
-
+        
         #KPI's
         # rendimentos
         rendimentos = df['Tipo de movimentação'].isin(["Rendimentos"])
