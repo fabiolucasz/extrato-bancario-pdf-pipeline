@@ -2,7 +2,7 @@
 
 [![Docker](https://img.shields.io/badge/Docker-latest-blue.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub last commit](https://img.shields.io/github/last-commit/fabiolucasz/Lanchonete-App.svg)](https://github.com/fabiolucasz/Lanchonete-App/commits/master)
+[![GitHub last commit](https://img.shields.io/github/last-commit/fabiolucasz/extrato-bancario-pdf-pipeline.svg)](https://github.com/fabiolucasz/extrato-bancario-pdf-pipeline/commits/main)
 
 Um projeto feito para analisar e acompanhar a evolução patrimonial dentro de um cofrinho do PicPay.
 *Será que o que te mostram como resultado no aplicativo é o mesmo que você tem extrato? Sinta -se a vontade para experimentar meu app.*
