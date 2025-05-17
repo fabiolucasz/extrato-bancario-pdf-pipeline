@@ -1,15 +1,43 @@
 import pandas as pd
 import streamlit as st
-from auth import authenticator
+import streamlit_authenticator as stauth
 import tabula
 from pathlib import Path
 from tratamento import tratamento_dados
+import Controllers.LoginController as LoginController
 
 
-# Criar pasta de dados se não existir
+
 Path("data").mkdir(parents=True, exist_ok=True)
 
-# Login 
+
+
+data = LoginController.loadall()
+if data:
+    names = data[0]
+    users = data[1]
+    passwords = data[2]
+
+
+credentials = {
+    "usernames": {
+        users[i]: {
+            "email": "",
+            "name": names[i],
+            "password": passwords[i]
+        } for i in range(len(users))
+    }
+}
+
+
+authenticator = stauth.Authenticate(
+    credentials=credentials,
+    cookie_name='some_cookie_name',
+    cookie_key='some_key',
+    cookie_expiry_days=30
+)
+
+
 authenticator.login()
 
 if st.session_state.get('authentication_status'):
@@ -21,7 +49,6 @@ if st.session_state.get('authentication_status'):
         tratamento_dados()
 
     
-        # Tenta carregar o arquivo CSV, mas continua se não existir
     df = pd.DataFrame()
     try:
         
@@ -33,7 +60,6 @@ if st.session_state.get('authentication_status'):
         #Filtros
         st.sidebar.header("Filtros")
 
-        # Verifica se há dados antes de tentar filtrar
         if len(df) > 0:
             #Filtro dataframe
             tipos = ["Guardado", "Resgatado", "Rendimentos", "Ajuste nos rendimentos"]
@@ -51,7 +77,6 @@ if st.session_state.get('authentication_status'):
             data_inicial = data_filtro['Data'].min()
             data_final = data_filtro['Data'].max()
             
-            # Se há apenas uma data, não mostra o slider e usa essa data única
             if data_inicial == data_final:
                 data_filtrada = data_filtro
                 st.sidebar.info(f"Apenas uma data disponível: {data_inicial.strftime('%d/%m/%Y')}")
@@ -175,14 +200,3 @@ if st.session_state.get('authentication_status'):
 
 elif st.session_state.get('authentication_status') is None:
     st.warning("Faça o login para continuar")
-
-
-      
-        
-
-
-
-#streamlit run app.py
-
-
-
